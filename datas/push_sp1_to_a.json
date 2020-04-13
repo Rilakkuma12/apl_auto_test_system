@@ -1,0 +1,42 @@
+{
+        "message_type": "command",
+        "message_group": "task_lims",
+        "message_content": {
+            "task_id": "test_task_move",
+            "device_id": "bc018008828e45edabcf40ea60747cdd",
+            "command_id": "%s",
+            "command": "move",
+            "parameters": {
+                "outputs": {
+                    "centrifuge": "false", 
+                    "rack_idx": "9", 
+                    "barcode": "BRMW010000000129", 
+                    "material": "MGRK01", 
+                    "location": "", 
+                    "device_type": "Hotel", 
+                    "level_idx": "2", 
+                    "position": "POS26", 
+                    "sealing": "false", 
+                    "tearing": "false", 
+                    "rack_id": "", 
+                    "device_id": "f98f0e77b88d451c9791fa5f496ca8ea"
+                }, 
+                {
+                    "centrifuge": "false", 
+                    "rack_idx": "7", 
+                    "barcode": "GETP020000000215", 
+                    "material": "MGRK01", 
+                    "location": "", 
+                    "device_type": "Hotel", 
+                    "level_idx": "1", 
+                    "position": "POS2", 
+                    "sealing": "false", 
+                    "tearing": "false", 
+                    "rack_id": "", 
+                    "device_id": "f98f0e77b88d451c9791fa5f496ca8ea"
+                }
+                ]
+            }
+        },
+        "message_id": "351e3a7cbc3b4b0c98e92ace8bca5e76"
+    }
