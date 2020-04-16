@@ -3,9 +3,9 @@
 # @Author : Tikyo
 # @Time   : 2019/7/9 20:52
 import psycopg2
-from handle_config import config
+from tools.handle_config import config
 import random
-from handle_log import my_logger
+from tools.handle_log import my_logger
 
 
 class HandlePostgres:
@@ -53,7 +53,7 @@ class HandlePostgres:
         if result:
             return result[0]
         else:
-            my_logger.error(f'query device id from db, find null, device_name:{device_name}, area:{area}')
+            # my_logger.error(f'query device id from db, find null, device_name:{device_name}, area:{area}')
             return None
 
     def get_rack_map_layer(self, pn):
@@ -65,6 +65,7 @@ class HandlePostgres:
         else:
             my_logger.error(f'query layer of rack from db, find null, rack_pn:{pn}')
             return None
+
 
 my_pg = HandlePostgres()
 if __name__ == '__main__':

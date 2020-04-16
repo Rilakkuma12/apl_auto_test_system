@@ -11,7 +11,7 @@ logger = HandleLogger(log_name='consumer_task_apl', name='case_t_a')
 consumer1 = KafkaConsumer(us.__topic_device, bootstrap_servers=['10.225.12.71:19092'])
 consumer2 = KafkaConsumer(us.__topic_storage_apl, bootstrap_servers=['10.225.12.71:19092'])
 consumer3 = KafkaConsumer(us.__topic_storage_lims, bootstrap_servers=['10.225.12.71:19092'])
-consumer4 = KafkaConsumer(us.__topic_task_apl, bootstrap_servers=['10.225.12.71:19092'])
+consumer4 = KafkaConsumer(us.topic_task_apl, bootstrap_servers=['10.225.12.71:19092'])
 consumer5 = KafkaConsumer(us.__topic_task_lims, bootstrap_servers=['10.225.12.71:19092'])
 consumers = [consumer1, consumer2, consumer3, consumer4, consumer5]
 

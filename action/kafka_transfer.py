@@ -156,7 +156,7 @@ def transfer_2():
 if __name__ == "__main__":
     try:
         for i in range(1):
-            # transfer(us.a_SP96XL1, 'POS2', us.b_SP96XL4, 'POS7')
+            transfer(us.a_SP96XL1, 'POS2', us.b_SP96XL4, 'POS7')
             # transfer(us.a_SP96XL1, 'POS3', us.b_SP96XL4, 'POS8')
             # transfer(us.a_SP96XL1, 'POS4', us.b_SP96XL4, 'POS9')
             #

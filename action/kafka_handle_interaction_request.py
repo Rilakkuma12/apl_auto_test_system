@@ -4,9 +4,10 @@
 # @Time   : 2019/8/9 13:15
 import uuid
 from tools.handle_log import my_logger
-from common import base as us
+from common.base import Base
 import time
 command_inter = ['success', 'failure']
+us = Base()
 
 
 def device_command_inter_response_fail(request_id, dest, pos, src, rack, level):
@@ -30,7 +31,7 @@ def device_command_inter_response_fail(request_id, dest, pos, src, rack, level):
                 }
             },
             "message_id":"fb7c8125c9ba463a8654da90cf9e867c"
-        }''' % (us.__topic_task_lims_, command_id, request_id, dest, pos, src, rack, level)
+        }''' % (us.topic_task_lims, command_id, request_id, dest, pos, src, rack, level)
     return comm
 
 
@@ -51,7 +52,7 @@ def device_command_inter_response_success(request_id, is_throw_away):
                 }
             },
             "message_id":"fb7c8125c9ba463a8654da90cf9e867c"
-        }''' % (us.__topic_task_lims_, command_id, request_id, is_throw_away)
+        }''' % (us.topic_task_lims, command_id, request_id, is_throw_away)
     return comm
 
 
@@ -65,7 +66,7 @@ def handle_load_from_inter_request(is_continue, is_throw_away):
         my_logger.debug('load_from_inter_request handle: {}'.format('back'))
         msg = device_command_inter_response_fail(request_id, dest, pos, src, rack, level)
     time.sleep(1)
-    us.send(us.__topic_task_lims, msg)
+    us.send(us.topic_task_lims, msg)
 
 
 if __name__ == '__main__':

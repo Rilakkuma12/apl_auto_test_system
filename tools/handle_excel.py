@@ -3,9 +3,9 @@
 # @Author : Tikyo
 # @Time   : 2019/6/26 19:11
 from openpyxl import load_workbook
-from handle_config import config
-from handle_log import my_logger
-from constance import TIME_RECORD_PATH
+from tools.handle_config import config
+from tools.handle_log import my_logger
+from tools.constance import TIME_RECORD_PATH
 import os
 
 

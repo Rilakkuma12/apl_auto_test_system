@@ -270,7 +270,7 @@ if __name__ == "__main__":
                                      push={'MGPH01': ('POS4',)})
             push_consumable_to_inter(us.a_SP96XL1, rack_idx='9', level_idx='5', barcode='MGPH010001000001',
                                      push={'MGPH01': ('POS5',)})
-            # load_consumable_from_inter(us.a_SP96XL1, rack_idx='5', level_idx='3', barcode='MGPH010001000001', load={'MGPH01': ('POS4',)})
+            load_consumable_from_inter(us.a_SP96XL1, rack_idx='5', level_idx='3', barcode='MGPH010001000001', load={'MGPH01': ('POS4',)})
             # push_consumable_to_inter(us.a_SP96XL1, rack_idx='5', level_idx='3', barcode='MGPH010001000001', push={'MGPH01': ('POS4',)})
 
             # load_consumable_from_inter(us.a_SP96XL1, rack_idx='5', level_idx='5', barcode='MGPH010001000001', load={'MGPH01': ('POS3',)})

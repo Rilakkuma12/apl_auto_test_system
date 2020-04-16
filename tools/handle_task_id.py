@@ -4,7 +4,7 @@
 # @Time   : 2019/8/21 10:31
 import random
 import os
-from constance import TASK_ID_FILE_PATH
+from tools.constance import TASK_ID_FILE_PATH
 random_num = ''.join(random.sample('0123456789', 3))
 
 

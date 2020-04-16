@@ -1,9 +1,9 @@
 # encoding=utf-8
 import uuid
-import base as us
+from common.base import Base as us
 import json
-from handle_log import HandleLogger
-from handle_task_id import my_task_id
+from tools.handle_log import HandleLogger
+from tools.handle_task_id import my_task_id
 
 my_logger = HandleLogger()
 
@@ -45,10 +45,11 @@ class KafkaLoad:
         self.my_store = list(us.hotel_store())
         self.__TASK_ID = my_task_id.get_task_id()
         self.command_id = uuid.uuid1()
-        self.topic = us.topic_task_lims_
+        self.topic = us.topic_task_lims
         self.__topic_task_apl = us.topic_task_apl
 
-    def load_materials(self, dest, is_pre_area=True, is_fridge=False, sealing=False, tear=False, centrifugal=False, **kwargs):
+    def load_materials(self, dest, is_pre_area=True,
+                       is_fridge=False, sealing=False, tear=False, centrifugal=False, **kwargs):
         """
         1.源设备：堆栈，冰箱，交互区
         2.源位置：rack， level
@@ -103,9 +104,9 @@ class KafkaLoad:
                 load_list.append(inputs)
         # 再把msg转回字符串
         msg1 = json.dumps(msg, indent=4)
-        self.__load_consumables_all_boards(dest, msg1)
+        self.load_consumables_all_boards(dest, msg1)
 
-    def __load_consumables_all_boards(self, dest, msg):
+    def load_consumables_all_boards(self, dest, msg):
         msg_load, com_id_load, task_id = (msg % (self.topic, self.__TASK_ID, dest, self.command_id)), \
                                          self.command_id, \
                                          self.__TASK_ID
@@ -114,7 +115,7 @@ class KafkaLoad:
         if us.wait_task_complete(us.consumer_task_apl, us.topic_task_apl, com_id_load):
             pass
         else:
-            raise Exception
+            raise Exception('上料任务失败结束')
 
 
 if __name__ == "__main__":

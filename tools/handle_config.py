@@ -4,7 +4,7 @@
 # @Time   : 2019/7/1 10:13
 from configparser import ConfigParser
 import os
-from constance import SETTING_CONF_PATH
+from tools.constance import SETTING_CONF_PATH
 
 
 class HandleConfig:
