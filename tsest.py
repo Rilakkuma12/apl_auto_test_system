@@ -21,11 +21,17 @@
 #
 # # print('函数名：{}'.format(func.__name__))
 # func()
-aa = []
-bb = aa[:]
-aa = ['aaa', 'bbb', 'cccc']
+# aa = []
+# bb = aa[:]
+# aa = ['aaa', 'bbb', 'cccc']
+#
+#
+# aa.remove('aaa')
+# pass
+import json
 
-
-aa.remove('aaa')
-pass
-
+qq = '''{
+        "final_command": "False"
+        }'''
+aa = json.loads(qq)
+print(aa)

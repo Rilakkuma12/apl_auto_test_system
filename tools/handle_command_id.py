@@ -7,11 +7,12 @@ class HandleCommandId:
         return str(uuid.uuid1()).replace('-', '')
 
 
+my_comm_id = HandleCommandId()
 if __name__ == '__main__':
-    comm = HandleCommandId()
-    aa = comm.get_command_id()
+    # comm = HandleCommandId()
+    aa = my_comm_id.get_command_id()
     print(aa)
-    bb = comm.get_command_id()
+    bb = my_comm_id.get_command_id()
     print(bb)
 
 

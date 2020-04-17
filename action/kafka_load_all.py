@@ -183,7 +183,8 @@ class KafkaLoadAll:
                 elif 'inter' in src:
                     # 从交互区上料
                     if location[3] in '1234':
-                        barcode = 'BRMW010000000001'
+                        # barcode = 'BRMW010000000001'
+                        barcode = 'GBRS010000000001'
                         holder_type = self.holder_type_all[0]
                     else:
                         barcode = 'MGPH010001000001'
@@ -228,8 +229,8 @@ if __name__ == '__main__':
     load.load_materials_all(us.b_SP96XL4,
                             load={
                                 'MGRK01': {
-                                    'POS4': '2:hotel::sealing-False:tear-False:cen-True',
-                                    'POS5': '2:hotel::sealing-False:tear-False:cen-False',
+                                    'POS8': '2:interaction2:POS41:sealing-False:tear-False:cen-True',
+                                    # 'POS8': '2:hotel::sealing-False:tear-False:cen-False',
                                 },
                                 # 'MGRK01-1': {
                                 #     'POS6': '1:hotel::sealing-False:tear-False:cen-False',

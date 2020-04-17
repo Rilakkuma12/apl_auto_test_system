@@ -268,10 +268,11 @@ class Base:
                 content = value['message_content']
                 request_id = content['request_id']
                 task_id = content['task_id']
+                comm_id = content['command_id']
                 barcode = content['parameters']['plate_barcode']
                 idx = content['parameters']['idx']
                 my_logger.info('received robot exception request_id: {}'.format(request_id))
-                return task_id, request_id, barcode, idx
+                return task_id, comm_id, request_id, barcode, idx
 
     def get_inter_request_info(self):
         my_logger.info('getting interaction request...')

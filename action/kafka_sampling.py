@@ -20,32 +20,25 @@ def quantification():
         "message_group": "%s",
         "message_content": {
             "task_id": "%s",
-            "device_id": "Hamilton-Test-Last,BMG-Test-Last",
+            "device_id": "B-STARlet-01, B-BMG",
             "command_id": "%s",
-            "command": "quant",
-            "final_command": "False",
+            "command": "sampling",
             "parameters": {
                 "script_code": "scriptname,noname",
-                "script_name": "Quantification_NIFTY_20190910_Cycle,Exkubit",
-                "script_content": "MQ==",
-                "inputs": [{
-                        "barcode":"EDUV010000004783",
-                        "column":"3",
-                        "group":"1",
-                        "position":"POS16"
-                    },
-                    {
-                        "barcode":"EDUV010000004781",
-                        "column":"-1",
-                        "group":"1",
-                        "position":"POS11"
-                    },
-                    {
-                        "barcode":"EDUV010000004782",
-                        "column":"-1",
-                        "group":"2",
-                        "position":"POS12"
-                    }]
+                "script_name": "Quantification_NIFTY_20190910_Cycle, Exkubit",
+                "normalize_data": [{
+                    "sample_code": "MGRK011111110001",
+                    "source_plate": "MGRK011111110001",
+                    "source_well": "<string>",
+                    "source_tube": "<string>",
+                    "dest_plate": "<string>",
+                    "dest_well": "<string>",
+                    "dest_tube": "<string>",
+                    "sample_vol": "<string>",
+                    "mgw_vol": "<string>",
+                    "te_vol": "<string>"
+                }
+            ]
             }
         }
     }''' % (us.topic_task_lims, __TASK_ID, command_id)

@@ -1,7 +1,7 @@
 #encoding=utf-8
 import uuid
-import base as us
-from handle_log import my_logger
+from common.base import Base
+from tools.handle_log import HandleLogger
 import json
 from handle_task_id import my_task_id
 __TASK_ID = my_task_id.get_task_id()
