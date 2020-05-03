@@ -201,33 +201,37 @@ class Base:
                 return False
             else:
                 continue
-# def hotel_store_for_push():
-#     hotel_goods_ah = []
-#     hotel_goods_bh = []
-#     url = __SERVER_URL + "Query/QueryHotel"
-#     response = requests.post(url)
-#     if response.status_code == 200:
-#         data = json.loads(response.content.decode('utf-8'))
-#         for hotel in data:
-#             if hotel['Id'] == a_HotelA:
-#                 prefix = 'AH1'
-#             elif hotel['Id'] == a_HotelB:
-#                 prefix = 'AH2'
-#             elif hotel['Id'] == b_HotelA:
-#                 prefix = 'BH1'
-#             elif hotel['Id'] == b_HotelB:
-#                 prefix = 'BH2'
-#             else:
-#                 my_logger.error('Unknown hotel {}'.format(hotel['Name']))
-#             for rack in hotel['Racks']:
-#                 rack_id = rack['RackId']
-#                 for consumable in rack['Consumables']:
-#                     if 'AH' in prefix:
-#                         hotel_goods_ah.append([{'addr': '{}R{}L{}'.format(prefix, consumable['RackIndex'], consumable['Index']), 'barcode': consumable['Code'], 'pn': consumable['PN'], 'rack_id': rack_id}])
-#                     else:
-#                         hotel_goods_bh.append([{'addr': '{}R{}L{}'.format(prefix, consumable['RackIndex'], consumable['Index']), 'barcode': consumable['Code'], 'pn': consumable['PN'], 'rack_id': rack_id}])
-#         my_logger.debug('query hotel store, hotel ah:{}, hotel bh:{}'.format(hotel_goods_ah, hotel_goods_bh))
-#         return hotel_goods_ah, hotel_goods_bh
+
+    def wait_task_accept(self, consumer, topic, task_id):
+        start = datetime.now()
+        my_logger.info('waiting...')
+        for msg in consumer:
+            value = json.loads(msg.value.decode('utf-8'))
+            if value is None:
+                continue
+            if not isinstance(value, dict):
+                value = json.loads(value)
+            message_type = value['message_type']
+            if message_type != 'task_response':
+                continue
+            content = value['message_content']
+            if (str(task_id) in content['task_id']) and ('accept' in content['response']):
+                end = datetime.now()
+                processing_time = str(end - start)
+                my_logger.info('task issue success! occupied: {} '.format(processing_time))
+                # 将耗时写入记录文件
+                # write_to_record_file(processing_time)
+                return True
+            elif (str(task_id) in content['task_id']) and ('refuse' in content['response']):
+                end = datetime.now()
+                processing_time = str(end - start)
+                my_logger.info('task issue fail! occupied: {}'.format(processing_time))
+                my_logger.error(f"failure reason: {content['msg']}")
+                # 将耗时写入记录文件
+                # write_to_record_file(processing_time)
+                return False
+            else:
+                continue
 
     @staticmethod
     def get_name(arg):
@@ -326,6 +330,9 @@ class Base:
 
 if __name__ == '__main__':
     bb = Base()
-    print(bb.a_HotelA, bb.a_HotelB, bb.b_HotelA, bb.b_HotelB)
-    print(bb.b_startlet, bb.b_bmg)
+    # print(bb.a_HotelA, bb.a_HotelB, bb.b_HotelA, bb.b_HotelB)
+    # print(bb.b_startlet, bb.b_bmg)
+
+    # bb.send(bb.topic_task_apl, 'hhhhhaaa')
+    print(bb.b_SP96XL4)
 

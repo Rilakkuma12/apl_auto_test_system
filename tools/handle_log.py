@@ -28,7 +28,8 @@ class HandleLogger:
             console_handle = logging.StreamHandler()
 
             simple_format = logging.Formatter('%(asctime)s | %(levelname)s | msg: %(message)s')
-            verbose_format = logging.Formatter('%(asctime)s | %(levelname)-5s | %(process)d | %(processName)s | msg: %(message)s - %(filename)s - %(lineno)d')
+            verbose_format = logging.Formatter('%(asctime)s | %(levelname)-5s | %(process)d | %(processName)s | msg: %(message)s')
+            #  - %(filename)s - %(lineno)d
 
             file_handle.setFormatter(verbose_format)
             console_handle.setFormatter(simple_format)

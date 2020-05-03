@@ -290,8 +290,8 @@ if __name__ == "__main__":
             # load_consumable_from_inter(us.a_SP96XL1, rack_idx='5', level_idx='5', rack_id='MGRK01',
             #                            barcode='MGRK010001000001', load={'MGRK01': ('POS18',)})
             # load_2_consumable_from_inter_slider()
-            # push_consumable_to_inter(us.b_SP100, hotel=us.b_interaction, rack_idx='2', level_idx='1',
-            #                          rack_id='BRMW01', barcode='BRMW010001000001', push={'BRMW01': ('POS4',)})
+            push_consumable_to_inter(us.b_SP100, hotel=us.b_interaction, rack_idx='2', level_idx='1',
+                                     rack_id='BRMW01', barcode='BRMW010001000001', push={'BRMW01': ('POS4',)})
             # push_consumable_to_inter(us.b_SP100, hotel=us.b_interaction, rack_idx='4', level_idx='1',
             #                          rack_id='BRMW01', barcode='BRMW010001000001', push={'BRMW01': ('POS5',)})
 

@@ -17,7 +17,6 @@ my_command_id = HandleCommandId()
 
 class KafkaLoadAll:
     topic = us.topic_task_lims
-    __topic_task_apl = us.topic_task_apl
     turn = 0
     device_list = {
         'module1': us.a_SP96XL1,
@@ -97,7 +96,7 @@ class KafkaLoadAll:
         "sealing": "%s",
         "tearing": "%s",
         "centrifuge": "%s",
-        "idx": "%d"
+        "idx": %d
     }'''
 
     msg = json.loads(__msg)  # 把msg转换为字典
@@ -106,6 +105,9 @@ class KafkaLoadAll:
     sealing = False
     tear = False
     centrifugal = False
+
+    def __init__(self, task_id=my_task_id.get_task_id()):
+        self.task_id = task_id
 
     def load_materials_all(self, dest, **kwargs):
         self.get_load_materials_input(**kwargs)
@@ -142,8 +144,6 @@ class KafkaLoadAll:
             pn = material_list[0][:6]
             for item in material_list[1].items():
                 pos = item[0]
-                # '1:hotel::::'
-                # '2:module1:pos2:sealing:tear:centrifugal'
                 area, src, location, sealing, tear, centrifugal = self.get_param_list(item[1])
 
                 if src == 'hotel':
@@ -183,8 +183,8 @@ class KafkaLoadAll:
                 elif 'inter' in src:
                     # 从交互区上料
                     if location[3] in '1234':
-                        # barcode = 'BRMW010000000001'
-                        barcode = 'GBRS010000000001'
+                        barcode = 'BRMW010000000001'
+                        # barcode = 'GBRS010000000001'
                         holder_type = self.holder_type_all[0]
                     else:
                         barcode = 'MGPH010001000001'
@@ -213,7 +213,7 @@ class KafkaLoadAll:
 
     def load_consumables_all_boards(self, dest, msg):
         command_id = my_command_id.get_command_id()
-        __TASK_ID = my_task_id.get_task_id()
+        __TASK_ID = self.task_id
         msg_load, com_id_load, task_id = \
             (msg % (self.topic, __TASK_ID, dest, command_id)), command_id, __TASK_ID
         my_logger.info('loadConsumables all boards,command id:{}，task id：{}'.format(com_id_load, task_id))
@@ -224,26 +224,28 @@ class KafkaLoadAll:
             raise Exception('上料任务失败结束')
 
 
+load_all = KafkaLoadAll()
 if __name__ == '__main__':
-    load = KafkaLoadAll()
-    load.load_materials_all(us.b_SP96XL4,
-                            load={
-                                'MGRK01': {
-                                    'POS8': '2:interaction2:POS41:sealing-False:tear-False:cen-True',
-                                    # 'POS8': '2:hotel::sealing-False:tear-False:cen-False',
-                                },
-                                # 'MGRK01-1': {
-                                #     'POS6': '1:hotel::sealing-False:tear-False:cen-False',
-                                # }
-                            })
-    # load.load_materials_all(us.a_SP96XL2,
+    # loadall = KafkaLoadAll()
+    # loadall.load_materials_all(us.b_SP96XL4,
     #                         load={
     #                             'MGRK01': {
-    #                                     'POS2': '1:hotel::sealing-False:tear-False:cen-False',
-    #                                     'POS3': '1:fridge::sealing-False:tear-False:cen-False',
-    #                                     'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False',
-    #                                     'POS5': '1:interaction1:POS41:sealing-False:tear-False:cen-False',
-    #                                     'POS7': '1:interaction1:POS55:sealing-False:tear-False:cen-False'
-    #                                     }
-    #                             })
+    #                                 'POS8': '2:interaction2:POS41:sealing-False:tear-False:cen-False',
+    #                                 'POS9': '2:interaction2:POS21:sealing-False:tear-False:cen-False',
+    #                                 # 'POS9': '2:hotel::sealing-False:tear-False:cen-False',
+    #                             },
+    #                             # 'MGRK01-1': {
+    #                             #     'POS6': '1:hotel::sealing-False:tear-False:cen-False',
+    #                             # }
+    #                         })
+    load_all.load_materials_all(us.b_SP96XL4,
+                            load={
+                                'MGRK01': {
+                                        'POS8': '2:hotel::sealing-False:tear-False:cen-False',
+                                        # 'POS3': '2:fridge::sealing-False:tear-False:cen-False',
+                                        # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False',
+                                        'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False',
+                                        'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False'
+                                        }
+                                })
 

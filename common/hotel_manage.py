@@ -12,14 +12,65 @@ class HotelManage:
     hotel_goods_bh = []
     hotel_goods_ac = []
     hotel_goods_ah_backup, hotel_goods_bh_backup, hotel_goods_ac_backup = None, None, None
+    hotel_goods_ah_empty, hotel_goods_bh_empty, hotel_goods_ac_empty = [], [], []
+    hotel_goods_ah_empty_backup, hotel_goods_bh_empty_backup, hotel_goods_ac_empty_backup = None, None, None
 
     def __init__(self):
         self.get_hotel_store()
+        self.get_hotel_empty()
 
     @staticmethod
     def query_hotel():
         """获取堆栈数据转换成dict格式"""
         return us.query_url("Dispatcher/QueryHotel")
+
+    def get_hotel_empty(self):
+        """获取一个空的堆栈，有rack"""
+        data = self.query_hotel()
+
+        for hotel in data['Content']:
+            if hotel['Id'] == us.a_HotelA:
+                prefix = 'AH1'
+            elif hotel['Id'] == us.a_HotelB:
+                prefix = 'AH2'
+            elif hotel['Id'] == us.b_HotelA:
+                prefix = 'BH1'
+            elif hotel['Id'] == us.b_HotelB:
+                prefix = 'BH2'
+            elif hotel['Id'] == us.a_CytomatA:
+                prefix = 'AC1'
+            else:
+                my_logger.error('Unknown hotel {}, func_name: {}'.format(hotel['Id'], sys._getframe().f_code.co_name))
+                continue
+            for rack in hotel['Racks']:
+                if rack == 'null':
+                    continue
+                elif rack is None:
+                    continue
+                try:
+                    rack_id = rack['RackId']
+                    idx = rack['Index']
+                    level_num = rack['Count']
+                    if hotel['Id'] == us.a_HotelA or hotel['Id'] == us.a_HotelB:
+                        for i in range(level_num):
+                            self.hotel_goods_ah_empty.append({
+                                'addr': '{}R{}L{}'.format(prefix, idx, i+1),
+                                'rack_id': rack_id})
+                    elif hotel['Id'] == us.b_HotelA or hotel['Id'] == us.b_HotelB:
+                        for i in range(level_num):
+                            self.hotel_goods_bh_empty.append({
+                                'addr': '{}R{}L{}'.format(prefix, idx, i+1),
+                                'rack_id': rack_id})
+                    elif hotel['Id'] == us.a_CytomatA:
+                        for i in range(level_num):
+                            self.hotel_goods_ac_empty.append({
+                                'addr': '{}R{}L{}'.format(prefix, idx, i+1),
+                                'rack_id': rack_id})
+                except Exception as e:
+                    my_logger.error(e)
+        self.hotel_goods_ah_empty_backup, self.hotel_goods_bh_empty_backup, self.hotel_goods_ac_empty_backup = \
+            self.hotel_goods_ah_empty[:], self.hotel_goods_bh_empty[:], self.hotel_goods_ac_empty[:]
+        return self.hotel_goods_ah_empty, self.hotel_goods_bh_empty, self.hotel_goods_ac_empty
 
     def get_hotel_store(self):
         """堆栈、冰箱库存转换及分类，分成A区堆栈、B区堆栈、A区冰箱"""
@@ -150,8 +201,6 @@ class HotelManage:
             self.hotel_goods_bh.remove(target[0])
             return target[0][0]['barcode']
 
-
-
     @staticmethod
     def pn_to_rack(pn):
         """查找pn对应的所有可能堆栈rack类型"""
@@ -232,13 +281,68 @@ class HotelManage:
                         else:
                             continue
 
+    def tell_which_pos_can_push(self, pn, is_pro_area, is_cytomat):
+
+        if is_cytomat:
+            rack_pn = self.pn_to_rack_cytomat(pn)
+            for item in self.hotel_goods_ac_empty:
+                if rack_pn in item['rack_id']:
+                    addr = item['addr']
+                    hotel_goods_ac_str = str(self.hotel_goods_ac)
+                    if addr not in hotel_goods_ac_str:
+                        # 把已经用过的空位删掉
+                        self.hotel_goods_ac_empty.remove(item)
+                        return addr
+
+        elif is_pro_area:
+            rack_pn = self.pn_to_rack(pn)
+            for item in self.hotel_goods_ah_empty:
+                if rack_pn in item['rack_id']:
+                    addr = item['addr']
+                    hotel_goods_ac_str = str(self.hotel_goods_ah)
+                    if addr not in hotel_goods_ac_str:
+                        self.hotel_goods_ah_empty.remove(item)
+                        return addr
+        else:
+            rack_pn = self.pn_to_rack(pn)
+            for item in self.hotel_goods_bh_empty:
+                if rack_pn in item['rack_id']:
+                    addr = item['addr']
+                    hotel_goods_ac_str = str(self.hotel_goods_bh)
+                    if addr not in hotel_goods_ac_str:
+                        self.hotel_goods_bh_empty.remove(item)
+                        return addr
+
+    def addr_to_rack_id(self, addr):
+        if 'AH1' in addr or 'AH2' in addr:
+            for item in self.hotel_goods_ah_empty_backup:
+                if addr == item['addr']:
+                    return item['rack_id']
+        elif 'BH1' in addr or 'BH2' in addr:
+            for item in self.hotel_goods_bh_empty_backup:
+                if addr == item['addr']:
+                    return item['rack_id']
+        else:
+            for item in self.hotel_goods_ac_empty_backup:
+                if addr == item['addr']:
+                    return item['rack_id']
+
 
 if __name__ == '__main__':
     my_store = HotelManage()
-    # print(my_store.get_hotel_store())
-    print(my_store.hotel_goods_ac)
-    aa = my_store.pn_to_barcode(pn='MGRK01', is_pre_area=True, is_cytomat=False)
-    print(aa)
+    qq, ww, ee = my_store.get_hotel_store()
+    # print(my_store.hotel_goods_bh)
+    aa, bb, cc = my_store.get_hotel_empty()
+    # aa = my_store.pn_to_barcode(pn='MGRK01', is_pre_area=True, is_cytomat=False)
+    print(ww)
+    print(bb)
+
+    # dd = my_store.tell_which_pos_can_push(pn='MGRK01', is_pro_area=False, is_cytomat=False)
+    # rr = my_store.tell_which_pos_can_push(pn='MGRK01', is_pro_area=False, is_cytomat=False)
+    # print(dd, rr)
+
+    tt = my_store.addr_to_rack_id('BH1R1L1')
+    print(tt)
 
 
 

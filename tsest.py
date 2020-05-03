@@ -28,10 +28,20 @@
 #
 # aa.remove('aaa')
 # pass
-import json
+# import json
+#
+# qq = '''{
+#         "final_command": "False"
+#         }'''
+# aa = json.loads(qq)
+# print(aa)
 
-qq = '''{
-        "final_command": "False"
-        }'''
-aa = json.loads(qq)
-print(aa)
+# aa = [[{'addr': 'BH1R1L2', 'barcode': 'MGRK025441140816', 'pn': 'MGRK02', 'rack_id': 'MGRK017720826447'}], ]
+# bb = str(aa)
+# if 'BH1R1L1' not in bb:
+#     print('yes')
+
+aa = 'AH1R14L7'
+
+bb = aa[aa.index('R') + 1: aa.index('L')]
+print(bb)
