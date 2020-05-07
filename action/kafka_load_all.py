@@ -60,7 +60,8 @@ class KafkaLoadAll:
         "sealing": "%s", 
         "tearing": "%s", 
         "centrifuge": "%s", 
-        "idx": %d
+        "idx": %d,
+        "centrifuge_pn": "%s"
     }'''
 
     __inputs_module = """
@@ -77,7 +78,8 @@ class KafkaLoadAll:
         "sealing": "%s", 
         "tearing": "%s", 
         "centrifuge": "%s", 
-        "idx": %d
+        "idx": %d,
+        "centrifuge_pn": "%s"
     }
     """
 
@@ -96,7 +98,8 @@ class KafkaLoadAll:
         "sealing": "%s",
         "tearing": "%s",
         "centrifuge": "%s",
-        "idx": %d
+        "idx": %d,
+        "centrifuge_pn": "%s"
     }'''
 
     msg = json.loads(__msg)  # 把msg转换为字典
@@ -105,6 +108,7 @@ class KafkaLoadAll:
     sealing = False
     tear = False
     centrifugal = False
+    centrifuge_pn = ''
 
     def __init__(self, task_id=my_task_id.get_task_id()):
         self.task_id = task_id
@@ -144,7 +148,7 @@ class KafkaLoadAll:
             pn = material_list[0][:6]
             for item in material_list[1].items():
                 pos = item[0]
-                area, src, location, sealing, tear, centrifugal = self.get_param_list(item[1])
+                area, src, location, sealing, tear, centrifugal, centrifuge_pn = self.get_param_list(item[1])
 
                 if src == 'hotel':
                     # 从冰箱上料
@@ -153,7 +157,7 @@ class KafkaLoadAll:
                                                                                                     False)
                     input_hotel = self.__inputs_hotel % (pn, pos, barcode, hotel_id,
                                                          rack_idx, rack_id, level_idx,
-                                                         sealing, tear, centrifugal, self.turn)
+                                                         sealing, tear, centrifugal, self.turn, centrifuge_pn)
                     self.turn += 1
                     input_hotel = json.loads(input_hotel)
                     self.load_list.append(input_hotel)
@@ -165,7 +169,7 @@ class KafkaLoadAll:
                                                                                                     True)
                     input_hotel = self.__inputs_hotel % (pn, pos, barcode, hotel_id,
                                                          rack_idx, rack_id, level_idx,
-                                                         sealing, tear, centrifugal, self.turn)
+                                                         sealing, tear, centrifugal, self.turn, centrifuge_pn)
                     self.turn += 1
                     input_hotel = json.loads(input_hotel)
                     self.load_list.append(input_hotel)
@@ -175,7 +179,8 @@ class KafkaLoadAll:
                     barcode = my_table.pos_to_barcode(self.device_list[src], location)
                     input_module = self.__inputs_module % (pn, pos, barcode,
                                                            self.device_list[src],
-                                                           location, sealing, tear, centrifugal, self.turn)
+                                                           location, sealing, tear, centrifugal,
+                                                           self.turn, centrifuge_pn)
                     self.turn += 1
                     input_module = json.loads(input_module)
                     self.load_list.append(input_module)
@@ -193,7 +198,7 @@ class KafkaLoadAll:
                                                          self.device_list[src],
                                                          holder_type,
                                                          location[3], location[4],
-                                                         sealing, tear, centrifugal, self.turn)
+                                                         sealing, tear, centrifugal, self.turn, centrifuge_pn)
 
                     self.turn += 1
                     input_inter = json.loads(input_inter)
@@ -208,8 +213,9 @@ class KafkaLoadAll:
         sealing = eval(param_list[3].split('-')[1]) if param_list[3] is not None else self.sealing
         tear = eval(param_list[4].split('-')[1]) if param_list[4] is not None else self.tear
         centrifugal = eval(param_list[5].split('-')[1]) if param_list[5] is not None else self.centrifugal
+        centrifugal_pn = param_list[6] if param_list[6] is not None else self.centrifuge_pn
 
-        return area, src, location, sealing, tear, centrifugal
+        return area, src, location, sealing, tear, centrifugal, centrifugal_pn
 
     def load_consumables_all_boards(self, dest, msg):
         command_id = my_command_id.get_command_id()
@@ -226,26 +232,15 @@ class KafkaLoadAll:
 
 load_all = KafkaLoadAll()
 if __name__ == '__main__':
-    # loadall = KafkaLoadAll()
-    # loadall.load_materials_all(us.b_SP96XL4,
-    #                         load={
-    #                             'MGRK01': {
-    #                                 'POS8': '2:interaction2:POS41:sealing-False:tear-False:cen-False',
-    #                                 'POS9': '2:interaction2:POS21:sealing-False:tear-False:cen-False',
-    #                                 # 'POS9': '2:hotel::sealing-False:tear-False:cen-False',
-    #                             },
-    #                             # 'MGRK01-1': {
-    #                             #     'POS6': '1:hotel::sealing-False:tear-False:cen-False',
-    #                             # }
-    #                         })
+
     load_all.load_materials_all(us.b_SP96XL4,
                             load={
                                 'MGRK01': {
-                                        'POS8': '2:hotel::sealing-False:tear-False:cen-False',
-                                        # 'POS3': '2:fridge::sealing-False:tear-False:cen-False',
-                                        # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False',
-                                        'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False',
-                                        'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False'
+                                        'POS8': '2:hotel::sealing-False:tear-False:cen-False:',
+                                        # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
+                                        # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
+                                        'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:',
+                                        'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:'
                                         }
                                 })
 

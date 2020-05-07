@@ -47,7 +47,8 @@ class KafkaPushAll:
         "sealing": "%s", 
         "tearing": "%s", 
         "centrifuge": "%s", 
-        "idx": %d
+        "idx": %d,
+        "centrifuge_pn": "%s"
     }'''
 
     __outputs_inter = '''
@@ -65,7 +66,8 @@ class KafkaPushAll:
         "sealing": "%s",
         "tearing": "%s",
         "centrifuge": "%s",
-        "idx": %d
+        "idx": %d,
+        "centrifuge_pn": "%s"
     }'''
 
     topic = us.topic_task_lims
@@ -75,6 +77,7 @@ class KafkaPushAll:
     sealing = False
     tear = False
     centrifugal = False
+    centrifuge_pn = ''
     area_map = {'1': True, '2': False}
     holder_type_all = ['slider', 'rack']
     device_list = {
@@ -116,14 +119,14 @@ class KafkaPushAll:
             for item in material_list[1].items():
                 pos = item[0]
                 barcode = my_table.pos_to_barcode(src, pos)
-                area, dest, location, sealing, tear, centrifugal = \
+                area, dest, location, sealing, tear, centrifugal, centrifuge_pn = \
                     self.get_param_list(item[1])
 
                 if dest == 'hotel':
                     # 堆栈下料
                     hotel_id, rack_idx, rack_id, level_idx = self.find_pos_from_hotel(pn, self.area_map[area], False)
                     output_hotel = self.__outputs_hotel % (pn, pos, barcode, hotel_id, rack_idx, rack_id, level_idx,
-                                                           sealing, tear, centrifugal, self.turn)
+                                                           sealing, tear, centrifugal, self.turn, centrifuge_pn)
                     self.turn += 1
                     output_hotel = json.loads(output_hotel)
                     self.push_list.append(output_hotel)
@@ -132,7 +135,7 @@ class KafkaPushAll:
                     # 冰箱下料
                     hotel_id, rack_idx, rack_id, level_idx = self.find_pos_from_hotel(pn, self.area_map[area], True)
                     output_hotel = self.__outputs_hotel % (pn, pos, barcode, hotel_id, rack_idx, rack_id, level_idx,
-                                                           sealing, tear, centrifugal, self.turn)
+                                                           sealing, tear, centrifugal, self.turn, centrifuge_pn)
                     self.turn += 1
                     output_hotel = json.loads(output_hotel)
                     self.push_list.append(output_hotel)
@@ -147,7 +150,7 @@ class KafkaPushAll:
                                                            self.device_list[dest],
                                                            holder_type,
                                                            location[3], location[4],
-                                                           sealing, tear, centrifugal, self.turn)
+                                                           sealing, tear, centrifugal, self.turn, centrifuge_pn)
 
                     self.turn += 1
                     output_inter = json.loads(output_inter)
@@ -162,7 +165,8 @@ class KafkaPushAll:
         sealing = eval(param_list[3].split('-')[1]) if param_list[3] is not None else self.sealing
         tear = eval(param_list[4].split('-')[1]) if param_list[4] is not None else self.tear
         centrifugal = eval(param_list[5].split('-')[1]) if param_list[5] is not None else self.centrifugal
-        return area, src, location, sealing, tear, centrifugal
+        centrifuge_pn = param_list[6] if param_list[6] is not None else self.centrifuge_pn
+        return area, src, location, sealing, tear, centrifugal, centrifuge_pn
 
     def find_pos_from_hotel(self, pn, is_pre, is_fridge):
         can_push_addr = my_hotel.tell_which_pos_can_push(pn, is_pre, is_fridge)
@@ -180,32 +184,15 @@ class KafkaPushAll:
 if __name__ == "__main__":
     try:
         pushall = KafkaPushAll()
-        # pushall.push_materials_all(us.b_SP96XL4,
-        #                         push={
-        #                             'BRMW01': {
-        #                                 # 'POS8': '2:interaction2:POS41:sealing-False:tear-False:cen-False',
-        #                                 'POS9': '2:interaction2:POS11:sealing-False:tear-False:cen-False',
-        #                                 # 'POS8': '2:hotel::sealing-False:tear-False:cen-False',
-        #                             }
-        #                             # 'MGRK01-1': {
-        #                             #     'POS6': '1:hotel::sealing-False:tear-False:cen-False',
-        #                             # }
-        #                         })
-        # pushall.push_materials_all(us.b_SP96XL4,
-        #                            push={
-        #                                'MGPH01': {
-        #                                    # 'POS8': '2:hotel::sealing-False:tear-False:cen-False',
-        #                                    'POS10': '2:interaction2:POS41:sealing-False:tear-False:cen-False'
-        #                                }
-        #                            })
+
         pushall.push_materials_all(us.b_SP96XL4,
                                    push={
                                        'MGRK01': {
-                                           'POS8': '2:hotel::sealing-False:tear-False:cen-False',
-                                           # 'POS3': '2:fridge::sealing-False:tear-False:cen-False',
-                                           # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False',
-                                           'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False',
-                                           'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False'
+                                           'POS8': '2:hotel::sealing-False:tear-False:cen-False:',
+                                           # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
+                                           # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
+                                           'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:',
+                                           'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:'
                                        }
                                    })
     except Exception as e:

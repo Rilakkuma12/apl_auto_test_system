@@ -30,7 +30,9 @@ home()
 
 dely(5)
 
-report(phase = '这是个普通的home脚本', step = '脚本结束')
+for i in range(10):
+    report(phase = '这是个普通的home脚本{}'.format(i), step = '脚本结束')
+    dely(5)
 
 home()
 
