@@ -57,20 +57,19 @@ class Base:
     # 设备id
     a_HotelA = my_pg.get_device_id(1, 'HotelA')
     a_HotelB = my_pg.get_device_id(1, 'HotelB')
-    a_SP96XL1 = my_pg.get_device_id(1, 'MGISP-96XLEX@')
-    # a_SP96XL2 = config.get_value('device id', 'a_SP96XL2')
-    a_SP96XL2 = 'b15842d15efa4f68a0051cbfcaf5e37d'
-    # a_SP96XL3 = config.get_value('device id', 'a_SP96XL3')
+    a_SP96XL1 = my_pg.get_device_id(1, 'MGISP-96XLEX@A-SP-96XLEX-01')
+    a_SP96XL2 = my_pg.get_device_id(1, 'MGISP-96XLEX@A-SP-96XLEX-02')
+    a_SP96XL3 = my_pg.get_device_id(1, 'MGISP-96XLEX@A-SP-96XLEX-03')
     a_interaction = my_pg.get_device_id(1, 'Interaction')
-    a_CytomatA =  my_pg.get_device_id(1, 'CytomatA')
+    a_CytomatA = my_pg.get_device_id(1, 'CytomatA')
 
-    b_SP96XL4 = my_pg.get_device_id(2, 'MGISP-96XLEX')
-    b_SP100 = my_pg.get_device_id(2, 'MGISP-100Plus')
+    b_SP96XL4 = my_pg.get_device_id(2, 'MGISP-96XLEX@B-SP-96XLEX')
+    b_SP100 = my_pg.get_device_id(2, 'MGISP-100Plus@B-SP-100PLUS')
     b_HotelA = my_pg.get_device_id(2, 'HotelA')
     b_HotelB = my_pg.get_device_id(2, 'HotelB')
     b_interaction = my_pg.get_device_id(2, 'Interaction')
-    b_startlet = my_pg.get_device_id(2, 'Hamilton-Test-Last')
-    b_bmg = my_pg.get_device_id(2, 'BMG-Test-Last')
+    b_startlet = my_pg.get_device_id(2, 'B-STARlet-01')
+    b_bmg = my_pg.get_device_id(2, 'B-BMG')
 
     var = ("hours", "minutes", "seconds")
     time2sec = lambda x: int(dt.timedelta(**{k: int(v) for k, v in zip(var, x.strip().split(":"))}).total_seconds())
@@ -330,9 +329,12 @@ class Base:
 
 if __name__ == '__main__':
     bb = Base()
-    # print(bb.a_HotelA, bb.a_HotelB, bb.b_HotelA, bb.b_HotelB)
-    # print(bb.b_startlet, bb.b_bmg)
+    print(bb.a_HotelA, bb.a_HotelB, bb.b_HotelA, bb.b_HotelB)
+    print(bb.b_startlet, bb.b_bmg)
 
     # bb.send(bb.topic_task_apl, 'hhhhhaaa')
     print(bb.b_SP96XL4)
+    print(bb.a_SP96XL1)
+    print(bb.a_SP96XL2)
+    print(bb.a_SP96XL3)
 

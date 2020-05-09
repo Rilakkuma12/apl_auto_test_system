@@ -233,14 +233,14 @@ class KafkaLoadAll:
 load_all = KafkaLoadAll()
 if __name__ == '__main__':
 
-    load_all.load_materials_all(us.b_SP96XL4,
+    load_all.load_materials_all(us.b_SP100,
                             load={
-                                'MGRK01': {
-                                        'POS8': '2:hotel::sealing-False:tear-False:cen-False:',
-                                        # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
-                                        # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
-                                        'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:',
-                                        'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:'
+                                'BRMW01': {
+                                        'POS4': '2:interaction2:POS11:sealing-False:tear-False:cen-False:',
+                                        # # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
+                                        # # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
+                                        # 'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:',
+                                        # 'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:'
                                         }
                                 })
 

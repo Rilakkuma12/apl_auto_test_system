@@ -93,9 +93,12 @@ class KafkaPushAll:
         'AC1': us.a_CytomatA,
     }
 
+    def __init__(self, task_id=my_task_id.get_task_id()):
+        self.task_id = task_id
+
     def push_consumables_all_boards(self, src, msg):
         comm_id = my_command_id.get_command_id()
-        task_id = my_task_id.get_task_id()
+        task_id = self.task_id
         msg_push = msg % (self.topic, task_id, src, comm_id)
         my_logger.info('push consumables all boards,command id: {},task id: {}'.format(comm_id, task_id))
         us.send(us.topic_task_lims, msg_push)

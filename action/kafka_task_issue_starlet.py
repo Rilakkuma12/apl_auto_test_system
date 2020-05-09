@@ -38,18 +38,10 @@ class KafkaTaskIssue:
             "task_id": "%s",
             "task_class": "",
             "module_id": "",
-            "device_type": "MGISP-96XLEX",
+            "device_type": "STARlet",
             "device_id": "%s",
             "parameters": {
-                "pcr_start": [{
-                        "pcr_name": "PCRA",
-                        "pcr_method": "START_30C"
-                    },
-                    {
-                        "pcr_name": "PCRB",
-                        "pcr_method": "START_30C"
-                    }
-                ]
+                "pcr_start": []
             }
         }
     }
@@ -69,5 +61,5 @@ class KafkaTaskIssue:
 issue = KafkaTaskIssue()
 if __name__ == '__main__':
 
-    issue.task_issue(us.a_SP96XL3)
+    issue.task_issue(us.b_startlet)
 
