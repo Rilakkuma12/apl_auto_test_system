@@ -1,4 +1,5 @@
 # encoding=utf-8
+import random
 import uuid
 from common.base import Base
 import json
@@ -9,8 +10,8 @@ from common.table_manage import TableManage
 from tools.handle_task_id import my_task_id
 from tools.handle_command_id import HandleCommandId
 my_logger = HandleLogger()
-my_hotel = HotelManage()
-my_table = TableManage()
+# my_hotel = HotelManage()
+# my_table = TableManage()
 us = Base()
 my_command_id = HandleCommandId()
 
@@ -110,20 +111,25 @@ class KafkaLoadAll:
     centrifugal = False
     centrifuge_pn = ''
 
-    def __init__(self, task_id=my_task_id.get_task_id()):
-        self.task_id = task_id
+    def __init__(self):
+        self.my_hotel = HotelManage()
+        self.my_table = TableManage()
 
-    def load_materials_all(self, dest, **kwargs):
+    def load_materials_all(self, dest, task_id=my_task_id.get_task_id(), **kwargs):
+        # 上完一轮刷新一下
+        self.my_hotel = HotelManage()
+        self.my_table = TableManage()
+
         self.get_load_materials_input(**kwargs)
         msg_str = json.dumps(self.msg, indent=4)
-        self.load_consumables_all_boards(dest, msg_str)
+        self.load_consumables_all_boards(dest, msg_str, task_id)
         # 上完一轮料，清空上料列表，清空idx
         self.load_list.clear()
         self.turn = 0
 
     def find_material_from_hotel(self, key, is_pre, is_fridge):
-        barcode = my_hotel.pn_to_barcode(key, is_pre, is_fridge)
-        addr = my_hotel.barcode_to_addr(barcode, is_pre, is_fridge)
+        barcode = self.my_hotel.pn_to_barcode(key, is_pre, is_fridge)
+        addr = self.my_hotel.barcode_to_addr(barcode, is_pre, is_fridge)
         hotel = addr[:3]
         rack_idx = addr[addr.find('R') + 1: addr.find('L')]
         level_idx = addr[addr.find('L') + 1:]
@@ -137,7 +143,7 @@ class KafkaLoadAll:
             hotel_id = us.a_CytomatA
         else:
             hotel_id = us.b_HotelB
-        rack_id = my_hotel.barcode_to_rack(barcode, is_pre, is_fridge)
+        rack_id = self.my_hotel.barcode_to_rack(barcode, is_pre, is_fridge)
         return barcode, hotel_id, rack_idx, rack_id, level_idx
 
     def get_load_materials_input(self, **kwargs):
@@ -176,7 +182,7 @@ class KafkaLoadAll:
 
                 elif 'module' in src:
                     # 从工位转移
-                    barcode = my_table.pos_to_barcode(self.device_list[src], location)
+                    barcode = self.my_table.pos_to_barcode(self.device_list[src], location)
                     input_module = self.__inputs_module % (pn, pos, barcode,
                                                            self.device_list[src],
                                                            location, sealing, tear, centrifugal,
@@ -188,8 +194,10 @@ class KafkaLoadAll:
                 elif 'inter' in src:
                     # 从交互区上料
                     if location[3] in '1234':
-                        barcode = 'BRMW010000000001'
-                        # barcode = 'GBRS010000000001'
+                        barcode_maybe = ['BRMW010000000001', 'GBEZ010000000001']
+                        # , 'DNDW010000000001', 'GBBD050000000001',
+                        # barcode = barcode_maybe[random.randint(0, 1)]
+                        barcode = 'GBBD050000000001'
                         holder_type = self.holder_type_all[0]
                     else:
                         barcode = 'MGPH010001000001'
@@ -217,9 +225,9 @@ class KafkaLoadAll:
 
         return area, src, location, sealing, tear, centrifugal, centrifugal_pn
 
-    def load_consumables_all_boards(self, dest, msg):
+    def load_consumables_all_boards(self, dest, msg, task_id):
         command_id = my_command_id.get_command_id()
-        __TASK_ID = self.task_id
+        __TASK_ID = task_id
         msg_load, com_id_load, task_id = \
             (msg % (self.topic, __TASK_ID, dest, command_id)), command_id, __TASK_ID
         my_logger.info('loadConsumables all boards,command id:{}，task id：{}'.format(com_id_load, task_id))
@@ -233,14 +241,21 @@ class KafkaLoadAll:
 load_all = KafkaLoadAll()
 if __name__ == '__main__':
 
-    load_all.load_materials_all(us.b_SP100,
-                            load={
-                                'BRMW01': {
-                                        'POS4': '2:interaction2:POS11:sealing-False:tear-False:cen-False:',
-                                        # # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
-                                        # # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
-                                        # 'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:',
-                                        # 'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:'
-                                        }
+    # load_all.load_materials_all(us.b_SP100,
+    #                         load={
+    #                             'BRMW01': {
+    #                                     'POS4': '2:interaction2:POS11:sealing-False:tear-False:cen-False:',
+    #                                     # # 'POS3': '2:fridge::sealing-False:tear-False:cen-False:',
+    #                                     # # 'POS4': '1:module1:POS4:sealing-False:tear-False:cen-False:',
+    #                                     # 'POS9': '2:interaction2:POS41:sealing-False:tear-False:cen-False:',
+    #                                     # 'POS10': '2:interaction2:POS55:sealing-False:tear-False:cen-False:'
+    #                                     }
+    #                             })
+
+    load_all.load_materials_all(us.b_SP96XL4,
+                                load={
+                                    'MGRK01': {
+                                        'POS4': '2:interaction2:POS11:sealing-False:tear-False:cen-True:GBRS01',
+                                    }
                                 })
 

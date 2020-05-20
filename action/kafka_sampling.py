@@ -12,7 +12,7 @@ __TASK_ID = my_task_id.get_task_id()
 
 
 def quantification():
-    # 测试设备操作：定量
+    # 测试设备操作：取样
     command_id = my_comm_id.get_command_id()
     comm = '''{
         "message_id": "25dead9b0c154b00adf9c0139f42b8a0",

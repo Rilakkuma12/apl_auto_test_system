@@ -341,8 +341,8 @@ if __name__ == '__main__':
     # rr = my_store.tell_which_pos_can_push(pn='MGRK01', is_pro_area=False, is_cytomat=False)
     # print(dd, rr)
 
-    tt = my_store.addr_to_rack_id('BH1R1L1')
-    print(tt)
+    # tt = my_store.addr_to_rack_id('BH1R1L1')
+    # print(tt)
 
 
 

@@ -63,7 +63,7 @@ class Base:
     a_interaction = my_pg.get_device_id(1, 'Interaction')
     a_CytomatA = my_pg.get_device_id(1, 'CytomatA')
 
-    b_SP96XL4 = my_pg.get_device_id(2, 'MGISP-96XLEX@B-SP-96XLEX')
+    b_SP96XL4 = my_pg.get_device_id(2, 'MGISP-96XLEX@SZMGIPS13410A')
     b_SP100 = my_pg.get_device_id(2, 'MGISP-100Plus@B-SP-100PLUS')
     b_HotelA = my_pg.get_device_id(2, 'HotelA')
     b_HotelB = my_pg.get_device_id(2, 'HotelB')

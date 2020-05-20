@@ -208,9 +208,9 @@ def scan_hotel_a_and_b():
 if __name__ == "__main__":
     try:
         for i in range(1):
-            scan_hotel(us.a_HotelA)
+            scan_hotel(us.b_HotelA)
             # scan_hotel_no_wait()
-            scan_hotel(us.a_HotelB)
+            scan_hotel(us.b_HotelB)
             # scan_hotel_no_wait(us.b_HotelA)
             # scan_hotel(us.b_HotelB)
             # scan_cytomat(us.a_CytomatA)

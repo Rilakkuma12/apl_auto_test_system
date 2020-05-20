@@ -10,8 +10,7 @@ from tools.handle_command_id import my_comm_id, HandleCommandId
 
 __TASK_ID = my_task_id.get_task_id()
 barcodes = []
-my_hotel = HotelManage()
-my_table = TableManage()
+
 us = Base()
 my_command_id = HandleCommandId()
 
@@ -93,12 +92,17 @@ class KafkaPushAll:
         'AC1': us.a_CytomatA,
     }
 
-    def __init__(self, task_id=my_task_id.get_task_id()):
-        self.task_id = task_id
+    def __init__(self):
+        self.my_hotel = HotelManage()
+        self.my_table = TableManage()
 
-    def push_consumables_all_boards(self, src, msg):
+    def push_consumables_all_boards(self, src, msg, task_id):
+        # 下完一轮刷新一下
+        self.my_hotel = HotelManage()
+        self.my_table = TableManage()
+
         comm_id = my_command_id.get_command_id()
-        task_id = self.task_id
+        # task_id = self.task_id
         msg_push = msg % (self.topic, task_id, src, comm_id)
         my_logger.info('push consumables all boards,command id: {},task id: {}'.format(comm_id, task_id))
         us.send(us.topic_task_lims, msg_push)
@@ -107,10 +111,10 @@ class KafkaPushAll:
         else:
             raise Exception
 
-    def push_materials_all(self, src, **kwargs):
+    def push_materials_all(self, src, task_id=my_task_id.get_task_id(), **kwargs):
         self.get_push_materials_output(src, **kwargs)
         msg_str = json.dumps(self.msg, indent=4)
-        self.push_consumables_all_boards(src, msg_str)
+        self.push_consumables_all_boards(src, msg_str, task_id)
         # 上完一轮料，清空上料列表，清空idx
         self.push_list.clear()
         self.turn = 0
@@ -121,7 +125,7 @@ class KafkaPushAll:
             pn = material_list[0][:6]
             for item in material_list[1].items():
                 pos = item[0]
-                barcode = my_table.pos_to_barcode(src, pos)
+                barcode = self.my_table.pos_to_barcode(src, pos)
                 area, dest, location, sealing, tear, centrifugal, centrifuge_pn = \
                     self.get_param_list(item[1])
 
@@ -172,7 +176,7 @@ class KafkaPushAll:
         return area, src, location, sealing, tear, centrifugal, centrifuge_pn
 
     def find_pos_from_hotel(self, pn, is_pre, is_fridge):
-        can_push_addr = my_hotel.tell_which_pos_can_push(pn, is_pre, is_fridge)
+        can_push_addr = self.my_hotel.tell_which_pos_can_push(pn, is_pre, is_fridge)
         if can_push_addr is None:
             my_logger.error('pn:{}, 堆栈无位置可放'.format(pn))
             return
@@ -180,15 +184,14 @@ class KafkaPushAll:
         hotel_id = self.device_list[hotel_name]
         rack = can_push_addr[can_push_addr.index('R') + 1: can_push_addr.index('L')]
         level = can_push_addr[can_push_addr.index('L') + 1:]
-        rack_id = my_hotel.addr_to_rack_id(can_push_addr)
+        rack_id = self.my_hotel.addr_to_rack_id(can_push_addr)
         return hotel_id, rack, rack_id, level
 
 
+push_all = KafkaPushAll()
 if __name__ == "__main__":
     try:
-        pushall = KafkaPushAll()
-
-        pushall.push_materials_all(us.b_SP96XL4,
+        push_all.push_materials_all(us.b_SP96XL4,
                                    push={
                                        'MGRK01': {
                                            'POS8': '2:hotel::sealing-False:tear-False:cen-False:',
